@@ -14,22 +14,18 @@ class Sidebar extends StatelessWidget {
     required this.isOpen,
     required this.onToggle,
   });
+
   @override
   Widget build(BuildContext context) {
-    final themeService = context.watch<ThemeService>();
-    //final screenWidth = MediaQuery.of(context).size.width;
+    final themeService = Provider.of<ThemeService>(context);
     return AnimatedContainer(
       decoration: BoxDecoration(
-        color: themeService.isDarkMode
-            ? const Color.fromARGB(
-                255, 0, 10, 27) // Dark blue background for dark mode
-            : const Color(0xFFFAFDFD), // White background for light mode
+        color: themeService.surfaceColor,
       ),
       duration: const Duration(milliseconds: 300),
       width: isOpen ? 250 : 90,
       child: Column(
         children: [
-          // Bouton toggle sidebar
           Container(
             padding: const EdgeInsets.all(16),
             alignment: Alignment.center,
@@ -39,9 +35,7 @@ class Sidebar extends StatelessWidget {
               tooltip: 'Toggle Sidebar',
             ),
           ),
-          const SizedBox(
-            height: 30,
-          ),
+          const SizedBox(height: 30),
           if (isOpen)
             Row(
               mainAxisAlignment: MainAxisAlignment.start,
@@ -54,40 +48,34 @@ class Sidebar extends StatelessWidget {
                       fontSize: 14,
                       fontFamily: 'Poppins',
                       fontWeight: FontWeight.w100,
-                      color: themeService.isDarkMode
-                          ? const Color.fromARGB(255, 255, 255, 255)
-                          : const Color.fromARGB(255, 0, 0, 0),
+                      color: themeService.textColor,
                     ),
                   ),
                 ),
               ],
             ),
           const SizedBox(height: 5),
-          // Boutons de navigation
           _buildSidebarButton(context, Icons.people, 'Gestion des Patients',
-              themeService, HomeScreen(themeService: themeService)),
+              themeService, const HomeScreen()),
           _buildSidebarButton(context, Icons.person_add, 'Ajouter Patient',
               themeService, const Ajoutepatient()),
           _buildSidebarButton(context, Icons.calendar_month, 'Rendez-vous',
-              themeService, Rendyvous(themeService: themeService)),
+              themeService, const Rendyvous()),
         ],
       ),
     );
   }
 
   Widget _buildSidebarButton(BuildContext context, IconData icon, String label,
-      dynamic themeService, Widget direction) {
+      ThemeService themeService, Widget direction) {
     return Container(
       decoration: BoxDecoration(
-        color: themeService.isDarkMode
-            ? const Color.fromARGB(255, 0, 10, 27)
-            : const Color(0xFFFAFDFD),
+        color: themeService.surfaceColor,
         borderRadius: const BorderRadius.only(
           topRight: Radius.circular(8.0),
         ),
       ),
       width: double.infinity,
-      //padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
       child: TextButton(
         onPressed: () {
           Navigator.push(
@@ -96,9 +84,7 @@ class Sidebar extends StatelessWidget {
           );
         },
         style: TextButton.styleFrom(
-          foregroundColor: themeService.isDarkMode
-              ? const Color.fromARGB(255, 255, 255, 255)
-              : const Color.fromARGB(255, 0, 0, 0),
+          foregroundColor: themeService.textColor,
           textStyle: const TextStyle(
               fontWeight: FontWeight.w500,
               fontFamily: 'Poppins',
@@ -115,8 +101,7 @@ class Sidebar extends StatelessWidget {
               isOpen ? MainAxisAlignment.start : MainAxisAlignment.center,
           children: [
             Icon(icon),
-            if (isOpen)
-              const SizedBox(width: 16), // Spacing between icon and text
+            if (isOpen) const SizedBox(width: 16),
             if (isOpen)
               Expanded(
                 child: Text(

@@ -364,11 +364,8 @@ class _AjoutepatientState extends State<Ajoutepatient> {
         children: [
           IconButton(
             onPressed: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) =>
-                          HomeScreen(themeService: themeService)));
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => HomeScreen()));
             },
             icon: const Icon(Icons.arrow_back),
           ),

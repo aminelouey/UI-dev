@@ -7,12 +7,7 @@ import 'patient_table.dart';
 import 'package:provider/provider.dart';
 
 class HomeScreen extends StatefulWidget {
-  final ThemeService themeService;
-
-  const HomeScreen({
-    super.key,
-    required this.themeService,
-  });
+  const HomeScreen({super.key});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -21,6 +16,8 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   bool _isSidebarOpen = true;
   final TextEditingController _searchController = TextEditingController();
+  List<Patient> _filteredPatients = [];
+  List<Patient> _searchResults = [];
 
   // Données d'exemple pour les patients
   final List<Patient> _patients = [
@@ -131,6 +128,12 @@ class _HomeScreenState extends State<HomeScreen> {
         lastVisit: '05/04/2024'),
   ];
 
+  @override
+  void initState() {
+    super.initState();
+    _filteredPatients = _patients;
+  }
+
   void _toggleSidebar() {
     setState(() {
       _isSidebarOpen = !_isSidebarOpen;
@@ -147,130 +150,339 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     final themeService = Provider.of<ThemeService>(context);
     final double screen = MediaQuery.of(context).size.width;
-    final double screen2 = MediaQuery.of(context).size.height;
-
-    debugPrint('Largeur de l\'écran: $screen');
-    debugPrint('Hauteur de l\'écran: $screen2');
 
     return Scaffold(
-      body: Row(
+      backgroundColor: themeService.backgroundColor,
+      body: Stack(
         children: [
-          Sidebar(
-            isOpen: _isSidebarOpen,
-            onToggle: _toggleSidebar,
-          ),
-          Expanded(
-            // 🟢 Garde Expanded ici car Row a déjà une largeur définie
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                // mainAxisSize: MainAxisSize.min,
-                children: [
-                  _buildAppBar(themeService),
-                  Padding(
-                    padding: const EdgeInsets.all(14.0),
-                    child: _buildSearchBar(),
-                  ),
-                  const SizedBox(height: 40),
-
-                  // Liste des Patient: ✅ Correction de Row contenant Expanded
-                  Column(
+          Row(
+            children: [
+              Sidebar(
+                isOpen: _isSidebarOpen,
+                onToggle: _toggleSidebar,
+              ),
+              Expanded(
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      Padding(
-                        padding: const EdgeInsets.only(left: 5),
-                        child: Row(
-                          children: [
-                            const Icon(Icons.list),
-                            const SizedBox(width: 8),
-                            const Text(
-                              'Listes des Patients : ',
-                              style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.w500,
-                                fontFamily: "Poppins",
-                              ),
-                            ),
-                            const SizedBox(
-                              width: 100,
-                            ),
-                            // bar de recherche List: 🔄 Remplacement de `Expanded` par `Flexible`
-                            Flexible(
-                              child: SizedBox(
-                                width: (screen > 900) ? 447 : screen - 250,
-                                child: TextField(
-                                  decoration: InputDecoration(
-                                    hintText: 'Rechercher un patient...',
-                                    hintStyle: const TextStyle(
-                                        fontWeight: FontWeight.w100),
-                                    prefixIcon: const Icon(Icons.search),
-                                    border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(8)),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            // ✅ Fixe le bouton "Nouveau Patient"
-                            const SizedBox(width: 5),
-
-                            Container(
-                              width: 200,
-                              height: 43,
-                              decoration: BoxDecoration(
-                                color: themeService.isDarkMode
-                                    ? const Color(0xFFFFFFFF)
-                                    : const Color.fromARGB(255, 100, 147, 255),
-                                borderRadius: BorderRadius.circular(8.0),
-                              ),
-                              child: TextButton(
-                                onPressed: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            const Ajoutepatient()),
-                                  );
-                                },
-                                child: const Row(
+                      _buildAppBar(themeService),
+                      const SizedBox(height: 40),
+                      const Row(
+                        children: [
+                          SizedBox(width: 100),
+                          Text(
+                            'Patients',
+                            style: TextStyle(
+                                fontSize: 35, fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 5),
+                      const Row(
+                        children: [
+                          SizedBox(width: 100),
+                          Text(
+                            'Gérez vos patients ici',
+                            style: TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.w100),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 40),
+                      SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Padding(
+                          padding: EdgeInsets.only(left: 100),
+                          child: Container(
+                            alignment: Alignment.topLeft,
+                            width: MediaQuery.of(context).size.width,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
                                   children: [
-                                    Icon(
-                                      Icons.add,
-                                      color: Color.fromARGB(255, 0, 0, 0),
-                                      size: 28,
+                                    const SizedBox(width: 7),
+                                    _buildSearchBar(),
+                                    buildSizedBox2(screen),
+                                    Container(
+                                      width: 220,
+                                      height: 43,
+                                      decoration: BoxDecoration(
+                                        color: themeService.buttonColor,
+                                        borderRadius:
+                                            BorderRadius.circular(8.0),
+                                      ),
+                                      child: TextButton(
+                                        onPressed: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    const Ajoutepatient()),
+                                          );
+                                        },
+                                        child: const Row(
+                                          children: [
+                                            Icon(
+                                              Icons.add,
+                                              color:
+                                                  Color.fromARGB(255, 0, 0, 0),
+                                              size: 22,
+                                            ),
+                                            SizedBox(width: 13),
+                                            Text(
+                                              'Nouveau Patient',
+                                              style: TextStyle(
+                                                  color: Colors.black),
+                                            )
+                                          ],
+                                        ),
+                                      ),
                                     ),
-                                    SizedBox(width: 13),
-                                    Text(
-                                      'Nouveau Patient',
-                                      style: TextStyle(
-                                          color: Colors.black, fontSize: 16),
-                                    )
+                                    buildSizedBox3(screen),
                                   ],
                                 ),
-                              ),
+                                const SizedBox(height: 2),
+                                SingleChildScrollView(
+                                  scrollDirection: Axis.vertical,
+                                  child: Container(
+                                    width: 900,
+                                    margin: const EdgeInsets.symmetric(
+                                      horizontal: 8,
+                                      vertical: 0,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      border: Border.all(
+                                        color: const Color.fromARGB(
+                                            255, 214, 214, 214),
+                                        width: 1,
+                                      ),
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child: DataTable(
+                                      columnSpacing: 20,
+                                      horizontalMargin: 12,
+                                      headingRowColor:
+                                          MaterialStateProperty.all(
+                                        themeService.isDarkMode
+                                            ? const Color.fromARGB(
+                                                255, 45, 45, 45)
+                                            : const Color.fromARGB(
+                                                255, 209, 227, 255),
+                                      ),
+                                      columns: const [
+                                        DataColumn(
+                                            label:
+                                                Expanded(child: Text('Nom'))),
+                                        DataColumn(
+                                            label:
+                                                Expanded(child: Text('Âge'))),
+                                        DataColumn(
+                                            label:
+                                                Expanded(child: Text('Genre'))),
+                                        DataColumn(
+                                            label: Expanded(
+                                                child: Text('Condition'))),
+                                        DataColumn(
+                                            label: Expanded(
+                                                child:
+                                                    Text('Dernière visite'))),
+                                        DataColumn(
+                                            label: Expanded(
+                                                child: Text('Actions'))),
+                                      ],
+                                      rows: _filteredPatients.map((patient) {
+                                        return DataRow(
+                                          cells: [
+                                            DataCell(Text(patient.name)),
+                                            DataCell(
+                                                Text(patient.age.toString())),
+                                            DataCell(Text(patient.gender)),
+                                            DataCell(Text(patient.condition)),
+                                            DataCell(Text(patient.lastVisit)),
+                                            DataCell(
+                                              IconButton(
+                                                icon: const Icon(Icons.info),
+                                                onPressed: () {
+                                                  showDialog(
+                                                    context: context,
+                                                    builder:
+                                                        (BuildContext context) {
+                                                      return AlertDialog(
+                                                        title: const Text(
+                                                            "Détails du Patient"),
+                                                        content: Column(
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .start,
+                                                          mainAxisSize:
+                                                              MainAxisSize.min,
+                                                          children: [
+                                                            Text(
+                                                              "Nom: ${patient.name}",
+                                                              style: const TextStyle(
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold),
+                                                            ),
+                                                            Text(
+                                                                "Âge: ${patient.age}"),
+                                                            Text(
+                                                                "Genre: ${patient.gender}"),
+                                                            Text(
+                                                                "Condition: ${patient.condition}"),
+                                                            Text(
+                                                                "Dernière visite: ${patient.lastVisit}"),
+                                                          ],
+                                                        ),
+                                                        actions: [
+                                                          TextButton(
+                                                            onPressed: () =>
+                                                                Navigator.pop(
+                                                                    context),
+                                                            child: const Text(
+                                                                "Fermer"),
+                                                          ),
+                                                        ],
+                                                      );
+                                                    },
+                                                  );
+                                                },
+                                              ),
+                                            ),
+                                          ],
+                                        );
+                                      }).toList(),
+                                    ),
+                                  ),
+                                )
+                              ],
                             ),
-                            const SizedBox(width: 5),
-                          ],
+                          ),
                         ),
                       ),
                     ],
                   ),
-
-                  const SizedBox(height: 1),
-
-                  // ✅ Fixe le tableau des patients
-                  Padding(
-                    padding: const EdgeInsets.only(left: 14.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        const SizedBox(width: 60),
-                        PatientTable(patients: _patients),
-                      ],
-                    ),
+                ),
+              ),
+            ],
+          ),
+          if (_searchController.text.isNotEmpty && _searchResults.isNotEmpty)
+            Positioned(
+              top: 265,
+              left: _isSidebarOpen ? 350 : 80,
+              child: Container(
+                width: 350,
+                constraints: const BoxConstraints(maxHeight: 250),
+                decoration: BoxDecoration(
+                  color: themeService.surfaceColor,
+                  borderRadius: BorderRadius.circular(4),
+                  border: Border.all(
+                    color: Colors.grey.withOpacity(0.2),
                   ),
-                ],
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.1),
+                      blurRadius: 4,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: Material(
+                  color: Colors.transparent,
+                  child: ListView.builder(
+                    padding: EdgeInsets.zero,
+                    shrinkWrap: true,
+                    itemCount: _searchResults.length,
+                    itemBuilder: (context, index) {
+                      final patient = _searchResults[index];
+                      return InkWell(
+                        onTap: () {
+                          setState(() {
+                            _searchController.clear();
+                            _searchResults = [];
+                          });
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: const Text("Détails du Patient"),
+                                content: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text(
+                                      "Nom: ${patient.name}",
+                                      style: const TextStyle(
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                    Text("Âge: ${patient.age}"),
+                                    Text("Genre: ${patient.gender}"),
+                                    Text("Condition: ${patient.condition}"),
+                                    Text(
+                                        "Dernière visite: ${patient.lastVisit}"),
+                                  ],
+                                ),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () => Navigator.pop(context),
+                                    child: const Text("Fermer"),
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 12),
+                          decoration: BoxDecoration(
+                            border: Border(
+                              bottom: BorderSide(
+                                color: Colors.grey.withOpacity(0.2),
+                              ),
+                            ),
+                          ),
+                          child: Row(
+                            children: [
+                              const Icon(Icons.person_outline,
+                                  size: 20, color: Colors.grey),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      patient.name,
+                                      style: const TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      patient.condition,
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        color: Colors.grey[600],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Icon(Icons.arrow_forward_ios,
+                                  size: 16, color: Colors.grey[400]),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
               ),
             ),
-          ),
         ],
       ),
     );
@@ -281,29 +493,13 @@ class _HomeScreenState extends State<HomeScreen> {
       height: 60,
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
         children: [
-          const Icon(Icons.people),
-          const SizedBox(width: 8),
-          const Text(
-            'Gestion des Patients',
-            style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                fontFamily: "Poppins"),
-          ),
-          const Spacer(),
-          // Bouton thème
           IconButton(
             icon: Icon(
                 themeService.isDarkMode ? Icons.light_mode : Icons.dark_mode),
             onPressed: () => themeService.toggleTheme(),
             tooltip: 'Changer de thème',
-          ),
-          // Bouton profil
-          IconButton(
-            icon: const Icon(Icons.account_circle),
-            onPressed: () {},
-            tooltip: 'Profil',
           ),
         ],
       ),
@@ -311,28 +507,53 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildSearchBar() {
-    return Row(
-      children: [
-        Flexible(
-          child: SizedBox(
-            width: MediaQuery.of(context).size.width > 900
-                ? 900
-                : MediaQuery.of(context).size.width, // Spécifiez la largeur ici
-            child: TextField(
-              controller: _searchController,
-              decoration: InputDecoration(
-                hintText: 'Rechercher un patient , group...',
-                hintStyle: const TextStyle(fontWeight: FontWeight.w100),
-                prefixIcon: const Icon(Icons.search),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                contentPadding: const EdgeInsets.symmetric(vertical: 12),
-              ),
-            ),
+    final themeService = Provider.of<ThemeService>(context);
+    return Container(
+      width: 350,
+      decoration: BoxDecoration(
+        color: themeService.surfaceColor,
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: TextField(
+        controller: _searchController,
+        onChanged: (value) {
+          setState(() {
+            if (value.isEmpty) {
+              _searchResults = [];
+            } else {
+              _searchResults = _patients
+                  .where((patient) =>
+                      patient.name.toLowerCase().contains(value.toLowerCase()))
+                  .toList();
+            }
+          });
+        },
+        decoration: InputDecoration(
+          hintText: 'Rechercher un patient par nom...',
+          hintStyle: const TextStyle(fontWeight: FontWeight.w100),
+          prefixIcon: const Icon(Icons.search),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
           ),
+          contentPadding: const EdgeInsets.symmetric(vertical: 12),
         ),
-      ],
+      ),
     );
+  }
+
+  Widget buildSizedBox2(double screen) {
+    if (screen > 1100) {
+      return SizedBox(width: 330);
+    } else {
+      return Container();
+    }
+  }
+
+  Widget buildSizedBox3(double screen) {
+    if (screen < 1100) {
+      return SizedBox(width: 100);
+    } else {
+      return Container();
+    }
   }
 }

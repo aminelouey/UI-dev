@@ -3,10 +3,7 @@ import 'package:projet_8016586/theme_service.dart';
 import 'package:provider/provider.dart';
 
 class RendezvousPrincipale extends StatefulWidget {
-  const RendezvousPrincipale({
-    super.key,
-    required ThemeService themeService,
-  });
+  const RendezvousPrincipale({super.key});
 
   @override
   _RendezVousPageState createState() => _RendezVousPageState();
@@ -36,7 +33,7 @@ class _RendezVousPageState extends State<RendezvousPrincipale> {
     final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
-      firstDate: DateTime(2022),
+      firstDate: DateTime(2025),
       lastDate: DateTime(2030),
     );
 
@@ -87,7 +84,7 @@ class _RendezVousPageState extends State<RendezvousPrincipale> {
               width: 100,
             ),
             Text(
-              'Gérez votre patient et vos rendez-vous ici',
+              'Gérez vos rendez-vous ici',
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.w100),
             ),
           ],
@@ -188,7 +185,7 @@ class _RendezVousPageState extends State<RendezvousPrincipale> {
                                   margin: EdgeInsets.symmetric(
                                       vertical: 3, horizontal: 16),
                                   decoration: BoxDecoration(
-                                    color: Color.fromARGB(255, 242, 251, 255),
+                                    color: Color.fromARGB(255, 220, 220, 220),
                                     borderRadius: BorderRadius.circular(10),
                                     boxShadow: [
                                       BoxShadow(
@@ -201,25 +198,55 @@ class _RendezVousPageState extends State<RendezvousPrincipale> {
                                     ],
                                   ),
                                   child: ListTile(
-                                    title: Text(
-                                      rendezVousList[index]['nom'] ?? '',
-                                      style: TextStyle(
-                                          fontSize: 15,
-                                          fontWeight: FontWeight.w500,
-                                          color: const Color.fromARGB(
-                                              255, 0, 0, 0)),
+                                    title: Row(
+                                      children: [
+                                        const Text(
+                                          "Nom et Prénom:   ",
+                                          style: TextStyle(
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.w500,
+                                            color: Color.fromARGB(255, 0, 0, 0),
+                                          ),
+                                        ),
+                                        Text(
+                                          rendezVousList[index]['nom'] ?? '',
+                                          style: const TextStyle(
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.normal,
+                                            color: Color.fromARGB(255, 0, 0, 0),
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                     subtitle: Padding(
                                       padding: const EdgeInsets.only(top: 4.0),
-                                      child: Text(
-                                        "Date : ${rendezVousList[index]['date'] ?? ''}",
-                                        style: TextStyle(
-                                            fontSize: 13,
-                                            fontWeight: FontWeight.w100,
-                                            color: Colors.black),
+                                      child: Row(
+                                        children: [
+                                          const Text(
+                                            "Date : ",
+                                            style: TextStyle(
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.w500,
+                                              color:
+                                                  Color.fromARGB(255, 0, 0, 0),
+                                            ),
+                                          ),
+                                          Text(
+                                            rendezVousList[index]['date'] ?? '',
+                                            style: const TextStyle(
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.normal,
+                                              color:
+                                                  Color.fromARGB(255, 0, 0, 0),
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                     ),
-                                    trailing: Icon(Icons.arrow_forward_ios),
+                                    trailing: const Icon(
+                                      Icons.arrow_forward_ios,
+                                      color: Colors.black,
+                                    ),
                                     onTap: () {
                                       showDialog(
                                         context: context,
@@ -489,17 +516,28 @@ class _RendezVousPageState extends State<RendezvousPrincipale> {
       decoration: BoxDecoration(
         color: themeService.isDarkMode
             ? const Color.fromARGB(255, 0, 10, 27)
-            : const Color.fromARGB(255, 242, 251, 255),
+            : Colors.white,
         borderRadius: BorderRadius.circular(8),
       ),
-
       width: MediaQuery.of(context).size.width > 900
           ? 350
-          : MediaQuery.of(context).size.width, // Spécifiez la largeur ici
+          : MediaQuery.of(context).size.width,
       child: TextField(
         controller: _searchController,
+        onChanged: (value) {
+          setState(() {
+            // Filtrer la liste des rendez-vous en fonction du texte saisi
+            rendezVousList = rendezVousList
+                .where((appointment) =>
+                    appointment['nom']
+                        ?.toLowerCase()
+                        .contains(value.toLowerCase()) ??
+                    false)
+                .toList();
+          });
+        },
         decoration: InputDecoration(
-          hintText: 'Rechercher un rendez-vous..',
+          hintText: 'Rechercher un rendez-vous par nom...',
           hintStyle: const TextStyle(fontWeight: FontWeight.w100),
           prefixIcon: const Icon(Icons.search),
           border: OutlineInputBorder(

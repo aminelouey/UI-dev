@@ -27,4 +27,21 @@ class ThemeService extends ChangeNotifier {
     _isDarkMode = !_isDarkMode;
     notifyListeners();
   }
+
+  // Méthode pour obtenir les couleurs communes
+  Color get backgroundColor => _isDarkMode
+      ? const Color.fromARGB(255, 0, 10, 27)
+      : const Color.fromARGB(255, 242, 251, 255);
+
+  Color get surfaceColor => _isDarkMode
+      ? const Color.fromARGB(255, 0, 10, 27)
+      : const Color(0xFFFAFDFD);
+
+  Color get textColor => _isDarkMode
+      ? const Color.fromARGB(255, 255, 255, 255)
+      : const Color.fromARGB(255, 0, 0, 0);
+
+  Color get buttonColor => _isDarkMode
+      ? const Color.fromARGB(255, 255, 255, 255)
+      : const Color.fromARGB(255, 0, 64, 255).withOpacity(0.6);
 }

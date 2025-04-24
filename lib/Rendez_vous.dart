@@ -6,10 +6,7 @@ import 'package:projet_8016586/theme_service.dart';
 import 'package:provider/provider.dart';
 
 class Rendyvous extends StatefulWidget {
-  const Rendyvous({
-    super.key,
-    required ThemeService themeService,
-  });
+  const Rendyvous({super.key});
 
   @override
   State<Rendyvous> createState() => _MyRendyvousState();
@@ -43,9 +40,7 @@ class _MyRendyvousState extends State<Rendyvous> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    RendezvousPrincipale(
-                      themeService: themeService,
-                    ),
+                    const RendezvousPrincipale(),
                   ],
                 ),
               ),

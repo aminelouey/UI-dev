@@ -36,20 +36,18 @@ class MyApp extends StatefulWidget {
 }
 
 class _PatientManagementAppState extends State<MyApp> {
-  final ThemeService _themeService = ThemeService();
-
   @override
   Widget build(BuildContext context) {
     final themeService = Provider.of<ThemeService>(context);
 
     return AnimatedBuilder(
-      animation: _themeService,
+      animation: themeService,
       builder: (context, _) {
         return MaterialApp(
           debugShowCheckedModeBanner: false,
           title: 'Gestion des Patients',
           theme: themeService.themeData,
-          home: HomeScreen(themeService: _themeService),
+          home: const HomeScreen(),
         );
       },
     );
