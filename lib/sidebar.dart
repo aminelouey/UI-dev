@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:projet_8016586/Rendez_vous.dart';
 import 'package:projet_8016586/ajoutepatient.dart';
 import 'package:projet_8016586/home_screen.dart';
+import 'package:projet_8016586/recommendation.dart';
 import 'package:projet_8016586/theme_service.dart';
 import 'package:provider/provider.dart';
 
@@ -60,7 +61,7 @@ class Sidebar extends StatelessWidget {
           _buildSidebarButton(context, Icons.person_add, 'Ajouter Patient',
               themeService, const Ajoutepatient()),
           _buildSidebarButton(context, Icons.calendar_month, 'Rendez-vous',
-              themeService, const Rendyvous()),
+              themeService, const RecommendationDialog()),
         ],
       ),
     );

@@ -303,53 +303,22 @@ class _HomeScreenState extends State<HomeScreen> {
                                             DataCell(Text(patient.condition)),
                                             DataCell(Text(patient.lastVisit)),
                                             DataCell(
-                                              IconButton(
-                                                icon: const Icon(Icons.info),
-                                                onPressed: () {
-                                                  showDialog(
-                                                    context: context,
-                                                    builder:
-                                                        (BuildContext context) {
-                                                      return AlertDialog(
-                                                        title: const Text(
-                                                            "Détails du Patient"),
-                                                        content: Column(
-                                                          crossAxisAlignment:
-                                                              CrossAxisAlignment
-                                                                  .start,
-                                                          mainAxisSize:
-                                                              MainAxisSize.min,
-                                                          children: [
-                                                            Text(
-                                                              "Nom: ${patient.name}",
-                                                              style: const TextStyle(
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold),
-                                                            ),
-                                                            Text(
-                                                                "Âge: ${patient.age}"),
-                                                            Text(
-                                                                "Genre: ${patient.gender}"),
-                                                            Text(
-                                                                "Condition: ${patient.condition}"),
-                                                            Text(
-                                                                "Dernière visite: ${patient.lastVisit}"),
-                                                          ],
-                                                        ),
-                                                        actions: [
-                                                          TextButton(
-                                                            onPressed: () =>
-                                                                Navigator.pop(
-                                                                    context),
-                                                            child: const Text(
-                                                                "Fermer"),
-                                                          ),
-                                                        ],
-                                                      );
-                                                    },
-                                                  );
-                                                },
+                                              Row(
+                                                children: [
+                                                  TextButton(
+                                                    onPressed: () {},
+                                                    child: const Text('Éditer'),
+                                                  ),
+                                                  TextButton(
+                                                    onPressed: () {},
+                                                    style: TextButton.styleFrom(
+                                                      foregroundColor:
+                                                          Colors.red,
+                                                    ),
+                                                    child:
+                                                        const Text('Supprimer'),
+                                                  ),
+                                                ],
                                               ),
                                             ),
                                           ],

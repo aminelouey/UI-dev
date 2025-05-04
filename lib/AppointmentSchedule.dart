@@ -80,21 +80,20 @@ class _AppointmentScheduleState extends State<AppointmentSchedule> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              TextField(
+              const TextField(
                 decoration: const InputDecoration(labelText: 'Nom du patient'),
               ),
               const SizedBox(height: 10),
-              TextField(
+              const TextField(
                 decoration:
-                    const InputDecoration(labelText: 'Heure de début (HH:MM)'),
+                    InputDecoration(labelText: 'Heure de début (HH:MM)'),
               ),
               const SizedBox(height: 10),
-              TextField(
-                decoration:
-                    const InputDecoration(labelText: 'Heure de fin (HH:MM)'),
+              const TextField(
+                decoration: InputDecoration(labelText: 'Heure de fin (HH:MM)'),
               ),
               const SizedBox(height: 10),
-              TextField(
+              const TextField(
                 decoration: const InputDecoration(labelText: 'Description'),
               ),
               const SizedBox(height: 10),

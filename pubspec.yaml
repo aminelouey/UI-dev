@@ -11,6 +11,8 @@ dependencies:
   cupertino_icons: ^1.0.6
   intl: ^0.18.1  # Utilisez la dernière version disponible
   sqflite: ^2.3.0
+  shelf: ^1.4.1
+  postgres: ^2.4.4
   path_provider: ^2.1.2
   path: ^1.8.3
   projet_8016586_f2f:

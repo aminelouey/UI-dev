@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:projet_8016586/AppointmentSchedule.dart';
 import 'package:projet_8016586/RendezvousPrincipale.dart';
 import 'package:projet_8016586/sidebar.dart';
 import 'package:projet_8016586/theme_service.dart';
@@ -34,13 +33,13 @@ class _MyRendyvousState extends State<Rendyvous> {
               isOpen: _isSidebarOpen,
               onToggle: _toggleSidebar,
             ),
-            Expanded(
+            const Expanded(
               child: SingleChildScrollView(
                 scrollDirection: Axis.vertical,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    const RendezvousPrincipale(),
+                    RendezvousPrincipale(),
                   ],
                 ),
               ),
